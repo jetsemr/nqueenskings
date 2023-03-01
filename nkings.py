@@ -23,11 +23,11 @@ def kingattacking(k1col, k1row, k2col, k2row):
 # Description: Returns the fitness of king placement by counting number of conflicts
 def kingfitnessmulticolumn(encoding):
   E = 19
-  for i in range(1,20):
-    for j in range(i+1,21):
+  for i in range(1,26):
+    for j in range(i+1,27):
       E -= kingattacking(encoding[i-1][0], encoding[i-1][1], encoding[j-1][0], encoding[j-1][1])
-      if (E < 19):
-        return 18
+      if (E < 25):
+        return 24
   return E
 
 import itertools
@@ -48,9 +48,9 @@ def queenattacking(q1col, q1row, q2col, q2row):
 ## queenfitness
 # evaluates the fitness of an encoding by calculating the number of attacking queen pairs
 def queenfitness(encoding):
-  E = 190
-  for i in range(1,20):
-    for j in range(i+1,21):
+  E = 325
+  for i in range(1,26):
+    for j in range(i+1,27):
       E -= queenattacking(i, encoding[i-1], j, encoding[j-1])
   return E
 
@@ -58,11 +58,11 @@ def queenfitness(encoding):
 # returns the nth successor of an encoding
 def getsuccessor(init, n, succ):
   n -= 1
-  quotient, remainder = divmod(n,19) 
+  quotient, remainder = divmod(n,25) 
   newrow=init[quotient]+remainder+1
-  if newrow>20:
-    newrow -= 20
-  for j in range(20):
+  if newrow>26:
+    newrow -= 26
+  for j in range(26):
     if j==quotient:
       succ[j]=newrow
     else:
@@ -72,18 +72,18 @@ def getsuccessor(init, n, succ):
 # generates a grid that displays the number of queens attacking each space
 def heuristicgrid(encoding):
   # grid to store heuristics
-  heuristicGrid = numpy.zeros(shape=(20, 20), dtype='int')
+  heuristicGrid = numpy.zeros(shape=(26, 26), dtype='int')
 
   # mark the existing queen placements
-  for i in range(20):
+  for i in range(26):
     heuristicGrid[i][encoding[i] - 1] = 99
   
   # calculate the fitness of each move
-  for i in range(1,381):
+  for i in range(1,651):
     temp = encoding[:]
     getsuccessor(encoding, i, temp)
     
-    heuristicGrid[math.floor((i - 1) / 19)][temp[math.floor((i - 1) / 19)] - 1] = 190 - queenfitness(temp)
+    heuristicGrid[math.floor((i - 1) / 25)][temp[math.floor((i - 1) / 25)] - 1] = 325 - queenfitness(temp)
   
   return heuristicGrid
 
@@ -96,26 +96,26 @@ def nkings(encoding):
 
   # safeboard = numpy.zeros(shape=(20, 20), dtype='int')
   safe = []
-  for i in range(20):
-    for j in range(20):
+  for i in range(26):
+    for j in range(26):
       if hgrid[i][j] == 1:
         # safeboard[i][j] = 1
         safe.append([i,j])
   print("Safe:", safe)
 
   parrangements = -1
-  if (len(safe) == 30):
+  if (len(safe) < 70):
     parrangements = 0
     print("Testing...", len(safe))
-    for arrangement in itertools.combinations(safe, 20):
-      if kingfitnessmulticolumn(arrangement) == 19:
+    for arrangement in itertools.combinations(safe, 26):
+      if kingfitnessmulticolumn(arrangement) == 25:
         print(arrangement)
         parrangements += 1
         print(parrangements)
-      if parrangements > 48:
+      if parrangements > 0:
         return "Fail"
   print("Arrangements:", parrangements)
-  if parrangements == 48:
+  if parrangements == 0:
         return encoding
   return "Fail"
 

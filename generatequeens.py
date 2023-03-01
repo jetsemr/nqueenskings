@@ -25,9 +25,9 @@ def queenattacking(q1col, q1row, q2col, q2row):
 #
 # the global variable EVALS keeps track of the number of times called
 def queenfitness(encoding):
-  E = 190
-  for i in range(1,20):
-    for j in range(i+1,21):
+  E = 325
+  for i in range(1,26):
+    for j in range(i+1,27):
       E -= queenattacking(i, encoding[i-1], j, encoding[j-1])
   return E
 
@@ -35,11 +35,11 @@ def queenfitness(encoding):
 # returns the nth successor of an encoding
 def getsuccessor(init, n, succ):
   n -= 1
-  quotient, remainder = divmod(n,19) 
+  quotient, remainder = divmod(n,25) 
   newrow=init[quotient]+remainder+1
-  if newrow>20:
-    newrow -= 20
-  for j in range(20):
+  if newrow>26:
+    newrow -= 26
+  for j in range(26):
     if j==quotient:
       succ[j]=newrow
     else:
@@ -48,23 +48,23 @@ def getsuccessor(init, n, succ):
 # find neighbor
 def findNeighbor(encoding):
   # grid to store heuristics
-  heuristicGrid = numpy.zeros(shape=(20, 20), dtype='int')
+  heuristicGrid = numpy.zeros(shape=(26, 26), dtype='int')
 
   # mark the existing queen placements
-  for i in range(20):
+  for i in range(26):
     heuristicGrid[i][encoding[i] - 1] = 99
 
   # calculate the fitness of each move
-  for i in range(1,381):
+  for i in range(1,651):
     temp = encoding[:]
     getsuccessor(encoding, i, temp)
     
-    heuristicGrid[math.floor((i - 1) / 19)][temp[math.floor((i - 1) / 19)] - 1] = 190 - queenfitness(temp)
+    heuristicGrid[math.floor((i - 1) / 25)][temp[math.floor((i - 1) / 25)] - 1] = 325 - queenfitness(temp)
   
   minNeighbor = [0,0]
 
-  for i in range(20):
-    for j in range(20):
+  for i in range(26):
+    for j in range(26):
       if heuristicGrid[i][j] < heuristicGrid[minNeighbor[0]][minNeighbor[1]]:
         minNeighbor = [i,j]
 
@@ -92,20 +92,19 @@ def nqueens(encoding):
 def RR(limit):
   count = 0
   while (count < limit):
-
     # track number of iterations
     count += 1
 
     # generate a random encoding
     encoding = []
-    for _ in range(20):
-      encoding.append(random.randint(1,20))
+    for _ in range(26):
+      encoding.append(random.randint(1,26))
 
     # run the hill climb
     solution = nqueens(encoding)
 
     # check solution
-    if queenfitness(solution) == 190:
+    if queenfitness(solution) == 325:
       return solution
   return "Fail"
 
@@ -116,7 +115,7 @@ def test():
     run = RR(100)
     if run != "Fail":
       mystring=' '.join(map(str,run))
-      f = open("nqueens.txt", "a")
+      f = open("testdata.txt", "a")
       f.write(mystring)
       f.write("\n")
   f.close()
